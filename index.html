@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Happy Tails Smart, Lda. — Intranet & Comunicação Interna</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Biblioteca MQTT para sincronização em tempo real sem necessidade de criar conta/servidor -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +41,7 @@
       font-family: 'Fredoka', sans-serif;
     }
     @keyframes popIn {
-      0% { opacity: 0; transform: scale(0.92) translateY(8px); }
+      0% { opacity: 0; transform: scale(0.94) translateY(8px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     .animate-pop {
@@ -49,6 +51,69 @@
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
+  <!-- ECRÃ DE ENTRADA POR PERFIL (LOGIN SIMPLES POR CÍRCULO) -->
+  <div id="profile-gate" class="fixed inset-0 bg-htCream z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-htSand rounded-3xl max-w-2xl w-full p-6 md:p-10 shadow-xl animate-pop text-center">
+      <div class="inline-flex flex-col items-center justify-center bg-white border border-htSand rounded-2xl px-6 py-4 shadow-xs mb-4">
+        <img 
+          src="assets/logo.png" 
+          alt="Happy Tails Smart, Lda." 
+          class="h-20 object-contain"
+          onerror="this.style.display='none'; document.getElementById('gate-logo-fallback').classList.remove('hidden');"
+        />
+        <div id="gate-logo-fallback" class="hidden flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-htOrange text-white flex items-center justify-center font-brand text-xl font-bold">HT</div>
+          <span class="font-brand text-2xl font-bold text-htOrange">Happy <span class="text-htAmber">Tails</span></span>
+        </div>
+      </div>
+
+      <h1 class="font-brand text-2xl md:text-3xl font-bold text-htBrown mb-1">Intranet Happy Tails Smart, Lda.</h1>
+      <p class="text-xs md:text-sm text-htBrown/75 mb-7">Selecione o seu perfil para entrar na sessão em tempo real:</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <!-- Perfil Nathana -->
+        <button type="button" onclick="enterProfile('Nathana Cantero', 'Admin & RGPD')" class="group bg-htCream hover:bg-amber-100/70 border-2 border-htSand hover:border-htBrown rounded-2xl p-5 text-center transition shadow-xs cursor-pointer">
+          <div class="w-14 h-14 rounded-full bg-htBrown text-white font-brand text-xl font-bold flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition">
+            NC
+          </div>
+          <p class="font-bold text-sm text-htBrown">Nathana Cantero</p>
+          <p class="text-[11px] font-semibold text-htBrown/70 mt-0.5">Admin & RGPD</p>
+          <span class="inline-block mt-3 px-3 py-1 rounded-full bg-white border border-htSand text-[10px] font-bold text-htBrown group-hover:bg-htBrown group-hover:text-white transition">
+            Entrar no Perfil →
+          </span>
+        </button>
+
+        <!-- Perfil Flávia -->
+        <button type="button" onclick="enterProfile('Flávia', 'Operações & Creche')" class="group bg-htCream hover:bg-orange-50 border-2 border-htSand hover:border-htOrange rounded-2xl p-5 text-center transition shadow-xs cursor-pointer">
+          <div class="w-14 h-14 rounded-full bg-htOrange text-white font-brand text-xl font-bold flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition">
+            FL
+          </div>
+          <p class="font-bold text-sm text-htBrown">Flávia</p>
+          <p class="text-[11px] font-semibold text-htOrange mt-0.5">Operações & Creche</p>
+          <span class="inline-block mt-3 px-3 py-1 rounded-full bg-white border border-htSand text-[10px] font-bold text-htOrange group-hover:bg-htOrange group-hover:text-white transition">
+            Entrar no Perfil →
+          </span>
+        </button>
+
+        <!-- Perfil Andreia -->
+        <button type="button" onclick="enterProfile('Andreia', 'Tech & Logística')" class="group bg-htCream hover:bg-teal-50/70 border-2 border-htSand hover:border-htTeal rounded-2xl p-5 text-center transition shadow-xs cursor-pointer">
+          <div class="w-14 h-14 rounded-full bg-htTeal text-white font-brand text-xl font-bold flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition">
+            AN
+          </div>
+          <p class="font-bold text-sm text-htBrown">Andreia</p>
+          <p class="text-[11px] font-semibold text-htTeal mt-0.5">Tech & Logística</p>
+          <span class="inline-block mt-3 px-3 py-1 rounded-full bg-white border border-htSand text-[10px] font-bold text-htTeal group-hover:bg-htTeal group-hover:text-white transition">
+            Entrar no Perfil →
+          </span>
+        </button>
+      </div>
+
+      <p class="text-[11px] text-htBrown/60">
+        Sincronização automática ativada: as tarefas Kanban e mensagens do chat são partilhadas em tempo real entre os 3 perfis.
+      </p>
+    </div>
+  </div>
+
   <!-- BARRA LATERAL (SIDEBAR) -->
   <aside class="w-full md:w-72 bg-white border-b md:border-b-0 md:border-r border-htSand flex flex-col justify-between p-5 shrink-0">
     <div>
@@ -57,7 +122,7 @@
         <img 
           src="assets/logo.png" 
           alt="Happy Tails Smart, Lda." 
-          class="h-24 object-contain"
+          class="h-20 object-contain"
           onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');"
         />
         <div id="logo-fallback" class="hidden flex flex-col items-center text-center">
@@ -65,23 +130,25 @@
           <span class="font-brand text-2xl font-bold text-htOrange tracking-tight">Happy <span class="text-htAmber">Tails</span></span>
         </div>
       </div>
-      <div class="flex items-center justify-between text-[11px] font-bold tracking-wider uppercase text-htOrange px-1 mb-6">
+
+      <!-- Estado da Ligação em Tempo Real -->
+      <div class="flex items-center justify-between text-[11px] font-bold tracking-wider uppercase text-htOrange px-1 mb-5">
         <span>SMART, LDA.</span>
-        <span class="text-emerald-700 flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Coimbra · Circular + Agile
+        <span id="sync-status" class="text-amber-600 flex items-center gap-1.5">
+          <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse inline-block"></span> A ligar...
         </span>
       </div>
 
-      <!-- Sessão Ativa -->
-      <div class="mb-6">
-        <label for="active-user" class="block text-[10px] font-bold uppercase tracking-wider text-htBrown/70 mb-1.5">
-          Sessão Ativa (Simular Círculo)
-        </label>
-        <select id="active-user" onchange="updateActiveUser()" class="w-full bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
-          <option value="Nathana Cantero|Admin & RGPD">Nathana Cantero (Admin & RGPD)</option>
-          <option value="Andreia|Tech & Logística">Andreia (Tech & Logística)</option>
-          <option value="Flávia|Operações & Creche">Flávia (Operações & Creche)</option>
-        </select>
+      <!-- Cartão do Perfil Atual + Botão Trocar -->
+      <div class="mb-6 bg-htCream border border-htSand rounded-2xl p-3.5">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-htBrown/60">Perfil Conectado</span>
+          <button type="button" onclick="switchProfileModal()" class="text-[10px] font-bold text-htOrange hover:underline">
+            Trocar Perfil
+          </button>
+        </div>
+        <p id="logged-user-name" class="font-bold text-sm text-htBrown">—</p>
+        <p id="logged-user-circle" class="text-[11px] font-semibold text-htOrange">—</p>
       </div>
 
       <!-- Navegação -->
@@ -94,8 +161,8 @@
         </button>
 
         <button onclick="switchTab('chat')" id="nav-chat" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold text-htBrown hover:bg-htCream transition">
-          <span>Chat Direto (Flávia & Andreia)</span>
-          <span class="bg-orange-100 text-htOrange px-2 py-0.5 rounded-full text-[11px] font-bold">Direto</span>
+          <span>Chat em Tempo Real</span>
+          <span id="badge-chat" class="bg-orange-100 text-htOrange px-2 py-0.5 rounded-full text-[11px] font-bold">Ao vivo</span>
         </button>
 
         <button onclick="switchTab('channels')" id="nav-channels" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold text-htBrown hover:bg-htCream transition">
@@ -112,7 +179,7 @@
     <!-- Nota Transparência Radical -->
     <div class="mt-8 bg-htCream border border-htSand rounded-2xl p-3.5 text-[11px] leading-relaxed">
       <p class="font-bold text-htOrange mb-1">Transparência Radical</p>
-      <p class="text-htBrown/80">Histórico aberto a todos os círculos. E-mail restrito a contratos e comunicações externas.</p>
+      <p class="text-htBrown/80">Alterações sincronizadas ao vivo entre Nathana, Flávia e Andreia.</p>
     </div>
   </aside>
 
@@ -145,7 +212,6 @@
 
     <!-- SEPARADOR 1: QUADRO KANBAN -->
     <section id="view-kanban" class="space-y-6">
-      <!-- Barra de Filtros -->
       <div class="bg-white border border-htSand rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-[11px] font-bold uppercase tracking-wider text-htBrown/70 mr-1">Círculo:</span>
@@ -162,7 +228,6 @@
 
       <!-- Colunas Kanban -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <!-- Coluna A Fazer -->
         <div class="bg-white/80 border border-htSand rounded-2xl p-4 flex flex-col min-h-[340px]">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-htSand">
             <div class="flex items-center gap-2">
@@ -174,7 +239,6 @@
           <div id="col-todo" class="space-y-3 flex-1"></div>
         </div>
 
-        <!-- Coluna Em Curso -->
         <div class="bg-white/80 border border-htSand rounded-2xl p-4 flex flex-col min-h-[340px]">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-htSand">
             <div class="flex items-center gap-2">
@@ -186,7 +250,6 @@
           <div id="col-doing" class="space-y-3 flex-1"></div>
         </div>
 
-        <!-- Coluna Concluído -->
         <div class="bg-white/80 border border-htSand rounded-2xl p-4 flex flex-col min-h-[340px]">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-htSand">
             <div class="flex items-center gap-2">
@@ -200,61 +263,38 @@
       </div>
     </section>
 
-    <!-- SEPARADOR 2: CHAT DIRETO (FLÁVIA & ANDREIA) -->
+    <!-- SEPARADOR 2: CHAT EM TEMPO REAL ENTRE PERFIS -->
     <section id="view-chat" class="hidden">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
-        <!-- Lista de Destinatárias -->
+        <!-- Lista de Colegas -->
         <div class="bg-white border border-htSand rounded-2xl p-4 space-y-2 h-fit">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-htBrown/60 px-2 mb-2">Equipa Operacional & Tech</p>
-          
-          <button type="button" onclick="selectChatRecipient('Flávia')" id="recipient-flavia" class="w-full text-left p-3 rounded-xl bg-orange-50 border border-htOrange/40 transition flex items-center justify-between">
-            <div>
-              <p class="font-bold text-xs text-htBrown">Flávia</p>
-              <p class="text-[11px] text-htOrange font-medium">Operações & Creche</p>
-            </div>
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-          </button>
-
-          <button type="button" onclick="selectChatRecipient('Andreia')" id="recipient-andreia" class="w-full text-left p-3 rounded-xl bg-htCream border border-transparent hover:border-htSand transition flex items-center justify-between">
-            <div>
-              <p class="font-bold text-xs text-htBrown">Andreia</p>
-              <p class="text-[11px] text-htTeal font-medium">Tech & Logística</p>
-            </div>
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-          </button>
+          <p class="text-[10px] font-bold uppercase tracking-wider text-htBrown/60 px-2 mb-2">Conversar em Tempo Real com:</p>
+          <div id="recipient-list" class="space-y-2"></div>
         </div>
 
-        <!-- Janela de Mensagens (Sem histórico prévio) -->
-        <div class="lg:col-span-3 bg-white border border-htSand rounded-2xl flex flex-col h-[480px] shadow-sm">
-          <!-- Topo do Chat -->
+        <!-- Janela de Mensagens em Tempo Real -->
+        <div class="lg:col-span-3 bg-white border border-htSand rounded-2xl flex flex-col h-[490px] shadow-sm">
           <div class="p-4 border-b border-htSand flex items-center justify-between bg-htCream/60 rounded-t-2xl">
             <div>
-              <h3 class="font-brand font-bold text-base text-htBrown">Conversa Direta com <span id="chat-target-name" class="text-htOrange">Flávia</span></h3>
-              <p id="chat-target-role" class="text-[11px] text-htBrown/70">Círculo: Operações & Creche · Sessão imediata (sem histórico acumulado)</p>
+              <h3 class="font-brand font-bold text-base text-htBrown">Chat Direto com <span id="chat-target-name" class="text-htOrange">—</span></h3>
+              <p id="chat-target-role" class="text-[11px] text-htBrown/70">Mensagens entregues e recebidas ao vivo entre sessões.</p>
             </div>
             <button type="button" onclick="clearCurrentChat()" class="text-[11px] font-semibold text-htBrown/60 hover:text-htOrange underline">
               Limpar ecrã
             </button>
           </div>
 
-          <!-- Área de Mensagens -->
-          <div id="direct-chat-messages" class="flex-1 p-5 overflow-y-auto space-y-3 bg-htCream/30">
-            <div class="h-full flex flex-col items-center justify-center text-center text-htBrown/50 text-xs px-4">
-              <p class="font-semibold mb-1">Canal direto pronto a utilizar.</p>
-              <p>Escreva abaixo para enviar uma instrução ou alinhamento rápido para <span id="empty-target-name" class="font-bold text-htBrown">Flávia</span>.</p>
-            </div>
-          </div>
+          <div id="direct-chat-messages" class="flex-1 p-5 overflow-y-auto space-y-3 bg-htCream/30"></div>
 
-          <!-- Formulário de Envio -->
           <form onsubmit="sendDirectMessage(event)" class="p-4 border-t border-htSand bg-white rounded-b-2xl flex flex-col sm:flex-row gap-2.5">
             <select id="quick-chat-template" onchange="applyChatTemplate()" class="bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-medium text-htBrown focus:outline-none focus:border-htOrange sm:w-56">
-              <option value="">-- Mensagem rápida (opcional) --</option>
-              <option value="Podes confirmar o check-in dos cães da manhã na receção?">Confirmar check-in da manhã</option>
-              <option value="Precisamos de validar a rota do Pet Taxi para hoje à tarde.">Validar rota Pet Taxi</option>
-              <option value="Atualizei os documentos RGPD no repositório. Podes rever?">Rever documentos RGPD</option>
-              <option value="Reunião rápida de alinhamento Agile (Daily) em 10 minutos.">Aviso Daily Agile (10 min)</option>
+              <option value="">-- Mensagem rápida --</option>
+              <option value="Podes confirmar o check-in dos cães da manhã?">Confirmar check-in da manhã</option>
+              <option value="Precisamos de validar a rota do Pet Taxi para hoje.">Validar rota Pet Taxi</option>
+              <option value="Atualizei os documentos RGPD. Podes rever?">Rever documentos RGPD</option>
+              <option value="Daily Agile rápida em 10 minutos!">Aviso Daily Agile (10 min)</option>
             </select>
-            <input type="text" id="direct-chat-input" required placeholder="Escreva a mensagem para enviar..." class="flex-1 bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs text-htBrown focus:outline-none focus:border-htOrange" />
+            <input type="text" id="direct-chat-input" required placeholder="Escreva para enviar e receber resposta em tempo real..." class="flex-1 bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs text-htBrown focus:outline-none focus:border-htOrange" />
             <button type="submit" class="px-5 py-2.5 rounded-xl bg-htOrange hover:bg-htOrangeHover text-white text-xs font-bold transition shadow-sm">
               Enviar
             </button>
@@ -275,7 +315,7 @@
       <div class="bg-white border border-htSand rounded-2xl p-5 space-y-4">
         <div class="flex items-center justify-between border-b border-htSand pb-3">
           <h3 id="channel-title" class="font-brand font-bold text-lg text-htBrown">#operacoes-creche</h3>
-          <span class="text-[11px] font-semibold text-htBrown/60">Clique em "Converter em Tarefa" para enviar ao Kanban</span>
+          <span class="text-[11px] font-semibold text-htBrown/60">Sincronizado ao vivo entre círculos</span>
         </div>
         <div id="channel-feed" class="space-y-3"></div>
         <form onsubmit="postChannelMessage(event)" class="pt-3 border-t border-htSand flex gap-2">
@@ -308,14 +348,14 @@
                 <td class="p-4">Visível para todos os círculos (A Fazer, Em Curso, Concluído). Elimina pedidos de ponto de situação.</td>
               </tr>
               <tr>
-                <td class="p-4 font-bold text-htTeal">Chat Direto & Canais Temáticos</td>
-                <td class="p-4">Alinhamentos rápidos entre círculos e urgências</td>
-                <td class="p-4">Comunicação ágil sem ruído; qualquer mensagem pode ser convertida em tarefa Kanban.</td>
+                <td class="p-4 font-bold text-htTeal">Chat em Tempo Real & Canais</td>
+                <td class="p-4">Alinhamentos rápidos entre Nathana, Flávia e Andreia</td>
+                <td class="p-4">Mensagens instantâneas ao vivo sem ruído; qualquer mensagem pode ser convertida em tarefa Kanban.</td>
               </tr>
               <tr>
                 <td class="p-4 font-bold text-htBrown">E-mail Institucional & Papel Timbrado</td>
                 <td class="p-4">Comunicações formais, contratuais ou externas</td>
-                <td class="p-4">Deixa de ser usado para gestão interna de tarefas; restrito a clientes, parceiros e documentação legal.</td>
+                <td class="p-4">Restrito a clientes, parceiros e documentação legal.</td>
               </tr>
             </tbody>
           </table>
@@ -324,7 +364,7 @@
     </section>
   </main>
 
-  <!-- MODAL: INSERIR NOVA TAREFA (COM OPÇÕES PARA SELECIONAR E INSERIR) -->
+  <!-- MODAL: INSERIR NOVA TAREFA -->
   <div id="task-modal" class="fixed inset-0 bg-htBrown/50 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
     <div class="bg-white border border-htSand rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-pop">
       <div class="flex items-center justify-between pb-3 mb-4 border-b border-htSand">
@@ -333,7 +373,6 @@
       </div>
 
       <form onsubmit="saveNewTask(event)" class="space-y-4">
-        <!-- Seletor de Modelo Pré-definido -->
         <div>
           <label for="task-preset" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
             1. Selecionar Modelo de Tarefa (ou escrever personalizada)
@@ -348,7 +387,6 @@
           </select>
         </div>
 
-        <!-- Título da Tarefa -->
         <div>
           <label for="task-title" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
             2. Título / Descrição da Tarefa *
@@ -356,13 +394,12 @@
           <input type="text" id="task-title" required placeholder="Ex.: Conferir stock de alimentação hipoalergénica..." class="w-full bg-white border border-htSand rounded-xl px-3.5 py-2.5 text-xs text-htBrown focus:outline-none focus:border-htOrange" />
         </div>
 
-        <!-- Círculo e Responsável -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label for="task-circle" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
               3. Círculo Responsável *
             </label>
-            <select id="task-circle" class="w-full bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
+            <select id="task-circle" class="w-full bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
               <option value="Operações & Creche">Operações & Creche</option>
               <option value="Tech & Logística">Tech & Logística</option>
               <option value="Admin & RGPD">Admin & RGPD</option>
@@ -373,7 +410,7 @@
             <label for="task-owner" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
               4. Pessoa Responsável *
             </label>
-            <select id="task-owner" class="w-full bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
+            <select id="task-owner" class="w-full bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
               <option value="Nathana Cantero">Nathana Cantero</option>
               <option value="Flávia">Flávia</option>
               <option value="Andreia">Andreia</option>
@@ -381,13 +418,12 @@
           </div>
         </div>
 
-        <!-- Coluna e Prioridade -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label for="task-status" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
               5. Estado Inicial
             </label>
-            <select id="task-status" class="w-full bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
+            <select id="task-status" class="w-full bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
               <option value="todo">A Fazer</option>
               <option value="doing">Em Curso</option>
               <option value="done">Concluído</option>
@@ -398,7 +434,7 @@
             <label for="task-priority" class="block text-[11px] font-bold uppercase tracking-wider text-htBrown/80 mb-1">
               6. Prioridade
             </label>
-            <select id="task-priority" class="w-full bg-htCream border border-htSand rounded-xl px-3 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
+            <select id="task-priority" class="w-full bg-htCream border border-htSand rounded-xl px-3.5 py-2.5 text-xs font-semibold text-htBrown focus:outline-none focus:border-htOrange">
               <option value="Normal">Normal</option>
               <option value="Alta">Alta (Sprint Atual)</option>
               <option value="Urgente">Urgente</option>
@@ -418,7 +454,7 @@
     </div>
   </div>
 
-  <!-- CAIXA DE CONFIRMAÇÃO DE INSERÇÃO DE DADOS (MODAL / ALERTA CENTRAL) -->
+  <!-- CAIXA DE CONFIRMAÇÃO DE INSERÇÃO DE DADOS -->
   <div id="confirmation-modal" class="fixed inset-0 bg-htBrown/40 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
     <div class="bg-white border-2 border-emerald-500 rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl animate-pop">
       <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
@@ -426,7 +462,7 @@
       </div>
       <h3 id="confirm-title" class="font-brand text-lg font-bold text-htBrown mb-1">Dados Inseridos com Sucesso!</h3>
       <p id="confirm-message" class="text-xs text-htBrown/80 leading-relaxed mb-5">
-        A operação foi registada e partilhada com todos os círculos.
+        A operação foi registada e sincronizada com todos os círculos.
       </p>
       <button type="button" onclick="closeConfirmation()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
         OK, Entendido
@@ -435,12 +471,20 @@
   </div>
 
   <script>
-    // Estado da Aplicação
+    // Perfis da Equipa Happy Tails
+    const TEAM_PROFILES = [
+      { name: 'Nathana Cantero', circle: 'Admin & RGPD', color: 'text-htBrown' },
+      { name: 'Flávia', circle: 'Operações & Creche', color: 'text-htOrange' },
+      { name: 'Andreia', circle: 'Tech & Logística', color: 'text-htTeal' }
+    ];
+
+    let currentUser = null;
+    let currentChatRecipient = null;
     let tasks = JSON.parse(localStorage.getItem('ht_intranet_tasks')) || [];
     let currentFilter = 'Todos';
     let currentChannel = '#operacoes-creche';
-    let currentChatRecipient = 'Flávia';
-    let directChats = { 'Flávia': [], 'Andreia': [] };
+    let directConversations = {}; // chave: "PessoaA|PessoaB" ordenada
+    let unreadCounts = {};
 
     let channelMessages = {
       '#operacoes-creche': [
@@ -457,13 +501,115 @@
       ]
     };
 
-    // Inicialização
-    document.addEventListener('DOMContentLoaded', () => {
+    // Ligação em Tempo Real via MQTT WebSocket (HiveMQ Broker Público)
+    const TOPIC_BASE = 'happytails/coimbra/intranet/v1';
+    const clientId = 'ht_' + Math.random().toString(16).substring(2, 10);
+    let mqttClient = null;
+
+    function initRealtimeSync() {
+      try {
+        mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+          clientId,
+          clean: true,
+          reconnectPeriod: 3000
+        });
+
+        mqttClient.on('connect', () => {
+          const statusEl = document.getElementById('sync-status');
+          statusEl.className = 'text-emerald-700 flex items-center gap-1.5';
+          statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ao Vivo';
+
+          mqttClient.subscribe(`${TOPIC_BASE}/kanban`);
+          mqttClient.subscribe(`${TOPIC_BASE}/chat`);
+          mqttClient.subscribe(`${TOPIC_BASE}/channels`);
+
+          // Solicita o estado atual do Kanban caso outra colega já esteja online
+          mqttClient.publish(`${TOPIC_BASE}/kanban`, JSON.stringify({ type: 'REQUEST_STATE', senderId: clientId }));
+        });
+
+        mqttClient.on('message', (topic, payload) => {
+          const data = JSON.parse(payload.toString());
+          if (data.senderId === clientId) return; // Ignora eco próprio
+
+          if (topic === `${TOPIC_BASE}/kanban`) {
+            if (data.type === 'REQUEST_STATE' && tasks.length > 0) {
+              mqttClient.publish(`${TOPIC_BASE}/kanban`, JSON.stringify({ type: 'SYNC_ALL', tasks, senderId: clientId }));
+            } else if (data.type === 'SYNC_ALL' && Array.isArray(data.tasks)) {
+              tasks = data.tasks;
+              localStorage.setItem('ht_intranet_tasks', JSON.stringify(tasks));
+              renderKanban();
+            }
+          }
+
+          if (topic === `${TOPIC_BASE}/chat`) {
+            // Verifica se a mensagem é para o utilizador atual ou enviada por ele
+            if (currentUser && (data.to === currentUser.name || data.from === currentUser.name)) {
+              const otherPerson = data.from === currentUser.name ? data.to : data.from;
+              const convKey = getConvKey(currentUser.name, otherPerson);
+              if (!directConversations[convKey]) directConversations[convKey] = [];
+              directConversations[convKey].push(data);
+
+              if (currentChatRecipient === otherPerson && !document.getElementById('view-chat').classList.contains('hidden')) {
+                renderDirectChat();
+              } else {
+                unreadCounts[otherPerson] = (unreadCounts[otherPerson] || 0) + 1;
+                updateChatBadges();
+                renderRecipientList();
+              }
+            }
+          }
+
+          if (topic === `${TOPIC_BASE}/channels`) {
+            if (!channelMessages[data.channel]) channelMessages[data.channel] = [];
+            channelMessages[data.channel].push(data.msg);
+            if (currentChannel === data.channel) renderChannelFeed();
+          }
+        });
+      } catch (err) {
+        console.warn('Erro na ligação em tempo real:', err);
+      }
+    }
+
+    function broadcastKanban() {
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(`${TOPIC_BASE}/kanban`, JSON.stringify({
+          type: 'SYNC_ALL',
+          tasks,
+          senderId: clientId
+        }));
+      }
+    }
+
+    function getConvKey(userA, userB) {
+      return [userA, userB].sort().join('|');
+    }
+
+    // Entrada no Perfil
+    function enterProfile(name, circle) {
+      currentUser = { name, circle };
+      document.getElementById('logged-user-name').textContent = name;
+      document.getElementById('logged-user-circle').textContent = circle;
+      document.getElementById('profile-gate').classList.add('hidden');
+
+      // Define a primeira colega disponível como destinatária padrão no chat
+      const colleagues = TEAM_PROFILES.filter(p => p.name !== name);
+      currentChatRecipient = colleagues[0].name;
+
+      renderRecipientList();
+      selectChatRecipient(currentChatRecipient);
       renderKanban();
       renderChannelFeed();
-    });
 
-    // Caixa de Confirmação de Inserção de Dados
+      if (!mqttClient) {
+        initRealtimeSync();
+      }
+    }
+
+    function switchProfileModal() {
+      document.getElementById('profile-gate').classList.remove('hidden');
+    }
+
+    // Caixa de Confirmação
     function showConfirmation(title, message) {
       document.getElementById('confirm-title').textContent = title;
       document.getElementById('confirm-message').textContent = message;
@@ -478,7 +624,7 @@
       modal.classList.remove('flex');
     }
 
-    // Navegação entre Separadores
+    // Navegação
     function switchTab(tab) {
       ['kanban', 'chat', 'channels', 'matrix'].forEach(t => {
         document.getElementById(`view-${t}`).classList.add('hidden');
@@ -492,9 +638,16 @@
       activeBtn.classList.add('bg-htOrange', 'text-white', 'shadow-sm', 'font-bold');
       activeBtn.classList.remove('text-htBrown', 'hover:bg-htCream', 'font-semibold');
 
+      if (tab === 'chat' && currentChatRecipient) {
+        unreadCounts[currentChatRecipient] = 0;
+        updateChatBadges();
+        renderRecipientList();
+        renderDirectChat();
+      }
+
       const titles = {
         kanban: ['Quadro Kanban Partilhado', 'Gestão visual centralizada: todas as tarefas visíveis entre círculos sem pedidos de ponto de situação.'],
-        chat: ['Chat Direto (Flávia & Andreia)', 'Comunicação instantânea e direta entre círculos sem acumulação de histórico.'],
+        chat: ['Chat em Tempo Real entre Círculos', 'Envie e receba mensagens instantaneamente com as colegas conectadas.'],
         channels: ['Canais Temáticos por Círculo', 'Comunicação organizada por frentes de trabalho com conversão direta para tarefas Kanban.'],
         matrix: ['Matriz & Protocolo de E-mail', 'Regras de Transparência Radical: quando usar a intranet vs. e-mail formal.']
       };
@@ -504,8 +657,10 @@
 
     // Modal Nova Tarefa
     function openTaskModal() {
-      const activeUser = document.getElementById('active-user').value.split('|')[0];
-      document.getElementById('task-owner').value = activeUser;
+      if (currentUser) {
+        document.getElementById('task-owner').value = currentUser.name;
+        document.getElementById('task-circle').value = currentUser.circle;
+      }
       document.getElementById('task-preset').value = '';
       document.getElementById('task-title').value = '';
       const modal = document.getElementById('task-modal');
@@ -538,24 +693,24 @@
 
       if (!title) return;
 
-      const newTask = {
+      tasks.unshift({
         id: Date.now(),
         title,
         circle,
         owner,
         status,
         priority
-      };
+      });
 
-      tasks.unshift(newTask);
       localStorage.setItem('ht_intranet_tasks', JSON.stringify(tasks));
+      broadcastKanban();
       closeTaskModal();
       switchTab('kanban');
       renderKanban();
 
       const statusLabels = { todo: 'A Fazer', doing: 'Em Curso', done: 'Concluído' };
       showConfirmation(
-        'Tarefa Guardada no Kanban!',
+        'Tarefa Guardada e Sincronizada!',
         `A tarefa "${title}" foi inserida na coluna "${statusLabels[status]}" (${circle} · Responsável: ${owner}).`
       );
     }
@@ -563,12 +718,14 @@
     function moveTask(id, newStatus) {
       tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
       localStorage.setItem('ht_intranet_tasks', JSON.stringify(tasks));
+      broadcastKanban();
       renderKanban();
     }
 
     function deleteTask(id) {
       tasks = tasks.filter(t => t.id !== id);
       localStorage.setItem('ht_intranet_tasks', JSON.stringify(tasks));
+      broadcastKanban();
       renderKanban();
     }
 
@@ -634,81 +791,131 @@
       });
     }
 
-    // Chat Direto com Flávia & Andreia (Sem histórico acumulado)
+    // Chat Direto Bidirecional em Tempo Real
+    function renderRecipientList() {
+      if (!currentUser) return;
+      const colleagues = TEAM_PROFILES.filter(p => p.name !== currentUser.name);
+      const container = document.getElementById('recipient-list');
+
+      container.innerHTML = colleagues.map(col => {
+        const isSelected = currentChatRecipient === col.name;
+        const unread = unreadCounts[col.name] || 0;
+        return `
+          <button type="button" onclick="selectChatRecipient('${col.name}')" class="w-full text-left p-3 rounded-xl border transition flex items-center justify-between ${isSelected ? 'bg-orange-50 border-htOrange/50' : 'bg-htCream border-transparent hover:border-htSand'}">
+            <div>
+              <p class="font-bold text-xs text-htBrown">${col.name}</p>
+              <p class="text-[11px] ${col.color} font-medium">${col.circle}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              ${unread > 0 ? `<span class="bg-htOrange text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-bounce">${unread} nova</span>` : ''}
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
     function selectChatRecipient(name) {
       currentChatRecipient = name;
+      unreadCounts[name] = 0;
+      updateChatBadges();
+
+      const profile = TEAM_PROFILES.find(p => p.name === name);
       document.getElementById('chat-target-name').textContent = name;
-      document.getElementById('empty-target-name').textContent = name;
-      document.getElementById('chat-target-role').textContent = name === 'Flávia'
-        ? 'Círculo: Operações & Creche · Sessão imediata (sem histórico acumulado)'
-        : 'Círculo: Tech & Logística · Sessão imediata (sem histórico acumulado)';
+      document.getElementById('chat-target-role').textContent = profile
+        ? `Círculo: ${profile.circle} · Chat ao vivo entre ${currentUser.name} e ${name}`
+        : '';
 
-      const btnFlavia = document.getElementById('recipient-flavia');
-      const btnAndreia = document.getElementById('recipient-andreia');
-
-      if (name === 'Flávia') {
-        btnFlavia.className = 'w-full text-left p-3 rounded-xl bg-orange-50 border border-htOrange/40 transition flex items-center justify-between';
-        btnAndreia.className = 'w-full text-left p-3 rounded-xl bg-htCream border border-transparent hover:border-htSand transition flex items-center justify-between';
-      } else {
-        btnAndreia.className = 'w-full text-left p-3 rounded-xl bg-orange-50 border border-htOrange/40 transition flex items-center justify-between';
-        btnFlavia.className = 'w-full text-left p-3 rounded-xl bg-htCream border border-transparent hover:border-htSand transition flex items-center justify-between';
-      }
+      renderRecipientList();
       renderDirectChat();
+    }
+
+    function updateChatBadges() {
+      const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+      const badge = document.getElementById('badge-chat');
+      if (totalUnread > 0) {
+        badge.textContent = `${totalUnread} nova(s)`;
+        badge.className = 'bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[11px] font-bold animate-pulse';
+      } else {
+        badge.textContent = 'Ao vivo';
+        badge.className = 'bg-orange-100 text-htOrange px-2 py-0.5 rounded-full text-[11px] font-bold';
+      }
     }
 
     function applyChatTemplate() {
       const tpl = document.getElementById('quick-chat-template').value;
-      if (tpl) {
-        document.getElementById('direct-chat-input').value = tpl;
-      }
+      if (tpl) document.getElementById('direct-chat-input').value = tpl;
     }
 
     function sendDirectMessage(e) {
       e.preventDefault();
+      if (!currentUser || !currentChatRecipient) return;
+
       const input = document.getElementById('direct-chat-input');
       const text = input.value.trim();
       if (!text) return;
 
-      const sender = document.getElementById('active-user').value.split('|')[0];
       const now = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+      const msgObj = {
+        from: currentUser.name,
+        to: currentChatRecipient,
+        text,
+        time: now,
+        senderId: clientId
+      };
 
-      directChats[currentChatRecipient].push({ sender, text, time: now });
+      const convKey = getConvKey(currentUser.name, currentChatRecipient);
+      if (!directConversations[convKey]) directConversations[convKey] = [];
+      directConversations[convKey].push(msgObj);
+
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(`${TOPIC_BASE}/chat`, JSON.stringify(msgObj));
+      }
+
       input.value = '';
       document.getElementById('quick-chat-template').value = '';
       renderDirectChat();
 
       showConfirmation(
-        'Mensagem Enviada!',
-        `A tua mensagem foi enviada diretamente para ${currentChatRecipient} às ${now}.`
+        'Mensagem Enviada ao Vivo!',
+        `Enviada por ${currentUser.name} para ${currentChatRecipient} às ${now}.`
       );
     }
 
     function clearCurrentChat() {
-      directChats[currentChatRecipient] = [];
+      if (!currentUser || !currentChatRecipient) return;
+      const convKey = getConvKey(currentUser.name, currentChatRecipient);
+      directConversations[convKey] = [];
       renderDirectChat();
     }
 
     function renderDirectChat() {
       const container = document.getElementById('direct-chat-messages');
-      const msgs = directChats[currentChatRecipient];
+      if (!currentUser || !currentChatRecipient) return;
+
+      const convKey = getConvKey(currentUser.name, currentChatRecipient);
+      const msgs = directConversations[convKey] || [];
 
       if (msgs.length === 0) {
         container.innerHTML = `
           <div class="h-full flex flex-col items-center justify-center text-center text-htBrown/50 text-xs px-4">
-            <p class="font-semibold mb-1">Canal direto pronto a utilizar.</p>
-            <p>Escreva abaixo para enviar uma instrução ou alinhamento rápido para <span class="font-bold text-htBrown">${currentChatRecipient}</span>.</p>
+            <p class="font-semibold mb-1">Canal direto em tempo real entre ${currentUser.name} e ${currentChatRecipient}.</p>
+            <p>Quando ${currentChatRecipient} entrar no perfil dela e responder, a mensagem aparecerá aqui imediatamente.</p>
           </div>`;
         return;
       }
 
-      container.innerHTML = msgs.map(m => `
-        <div class="flex flex-col items-end">
-          <div class="bg-htOrange text-white rounded-2xl rounded-tr-xs px-4 py-2.5 max-w-md shadow-xs">
-            <p class="text-[10px] font-bold opacity-85 mb-0.5">${m.sender} → ${currentChatRecipient} · ${m.time}</p>
-            <p class="text-xs leading-relaxed">${m.text}</p>
+      container.innerHTML = msgs.map(m => {
+        const isMine = m.from === currentUser.name;
+        return `
+          <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+            <div class="${isMine ? 'bg-htOrange text-white rounded-tr-xs' : 'bg-white border border-htSand text-htBrown rounded-tl-xs'} rounded-2xl px-4 py-2.5 max-w-md shadow-xs">
+              <p class="text-[10px] font-bold ${isMine ? 'opacity-85' : 'text-htOrange'} mb-0.5">${m.from} · ${m.time}</p>
+              <p class="text-xs leading-relaxed">${m.text}</p>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       container.scrollTop = container.scrollHeight;
     }
 
@@ -748,13 +955,23 @@
       e.preventDefault();
       const input = document.getElementById('channel-input');
       const text = input.value.trim();
-      if (!text) return;
-      const author = document.getElementById('active-user').value.split('|')[0];
+      if (!text || !currentUser) return;
+
       const time = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-      channelMessages[currentChannel].push({ author, text, time });
+      const msg = { author: currentUser.name, text, time };
+      channelMessages[currentChannel].push(msg);
+
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(`${TOPIC_BASE}/channels`, JSON.stringify({
+          channel: currentChannel,
+          msg,
+          senderId: clientId
+        }));
+      }
+
       input.value = '';
       renderChannelFeed();
-      showConfirmation('Publicação Registada!', `Mensagem publicada no canal ${currentChannel}.`);
+      showConfirmation('Publicação Registada!', `Mensagem publicada no canal ${currentChannel} por ${currentUser.name}.`);
     }
 
     function convertMsgToTask(idx) {
@@ -774,13 +991,9 @@
         priority: 'Normal'
       });
       localStorage.setItem('ht_intranet_tasks', JSON.stringify(tasks));
+      broadcastKanban();
       renderKanban();
       showConfirmation('Convertida em Tarefa Kanban!', `A mensagem de ${msg.author} foi adicionada à coluna "A Fazer".`);
-    }
-
-    function updateActiveUser() {
-      const activeUser = document.getElementById('active-user').value.split('|')[0];
-      document.getElementById('task-owner').value = activeUser;
     }
   </script>
 </body>

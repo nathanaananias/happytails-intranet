@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Tails Smart, Lda. — Intranet & Comunicação Circular + Agile</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka (Títulos/Marca) & Montserrat (Textos Institucionais) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+            display: ['Fredoka', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#FDF8F3',
+              100: '#FAF3EB',
+              200: '#EADCCF',
+              300: '#F8BA6A',
+              500: '#E65310',
+              600: '#D4480B',
+              700: '#B83C08',
+              800: '#54280B',
+              900: '#3B1B06',
+            },
+            ht: {
+              orange: '#E65310',
+              orangeHover: '#C9440A',
+              amber: '#F3921F',
+              brown: '#54280B',
+              brownDeep: '#3B1B06',
+              cream: '#FDF8F3',
+              sand: '#FAF3EB',
+              border: '#EADCCF',
+              tech: '#1E6F78',
+              urgent: '#C83E2B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --ht-orange: #E65310;
+      --ht-amber: #F3921F;
+      --ht-brown: #54280B;
+      --ht-cream: #FDF8F3;
+      --ht-border: #EADCCF;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--ht-cream);
+      color: var(--ht-brown);
+    }
+    h1, h2, h3, .font-brand {
+      font-family: 'Fredoka', sans-serif;
+    }
+    /* Custom warm scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF3EB;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DFCBB9;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C7AC95;
+    }
+    .kanban-card {
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .kanban-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--ht-orange);
+      box-shadow: 0 10px 20px -5px rgba(84, 40, 11, 0.08), 0 4px 6px -2px rgba(230, 83, 16, 0.06);
+    }
+    .dragging {
+      opacity: 0.55;
+      transform: scale(0.98);
+    }
+    .drag-over {
+      background-color: #FAF3EB !important;
+      border-color: var(--ht-orange) !important;
+    }
+    /* Marca d'água sutil de pata tecnológica no fundo */
+    .watermark-bg {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' fill='none'%3E%3Cg opacity='0.035' stroke='%2354280B' stroke-width='2'%3E%3Ccircle cx='90' cy='105' r='18'/%3E%3Ccircle cx='62' cy='76' r='8'/%3E%3Ccircle cx='81' cy='62' r='8'/%3E%3Ccircle cx='103' cy='63' r='8'/%3E%3Ccircle cx='119' cy='79' r='8'/%3E%3Cpath d='M90 87V70M76 94L66 82M104 95L114 84' stroke-dasharray='3 3'/%3E%3Ccircle cx='90' cy='105' r='4' fill='%23E65310'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden bg-ht-cream text-ht-brown">
+
+  <!-- MOBILE TOP BAR -->
+  <header class="md:hidden bg-white border-b border-ht-border px-4 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+    <div class="flex items-center gap-3">
+      <!-- Contentor Limpo para o Logótipo Oficial (assets/logo.png com fallback SVG) -->
+      <div class="h-11 px-2.5 py-1 rounded-xl bg-white border border-ht-border flex items-center justify-center shadow-2xs shrink-0">
+        <img src="assets/logo.png" alt="Happy Tails Smart, Lda." class="h-9 w-auto object-contain"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div style="display:none;" class="items-center gap-1.5">
+          <svg class="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M29 8C16 9 7 20 8 34C9 45 17 53 27 56" stroke="#E65310" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M16 32V23L32 12L48 23V32" stroke="#54280B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="29" y="18" width="2.5" height="2.5" rx="0.5" fill="#F3921F"/>
+            <rect x="33" y="18" width="2.5" height="2.5" rx="0.5" fill="#F3921F"/>
+            <rect x="29" y="22" width="2.5" height="2.5" rx="0.5" fill="#F3921F"/>
+            <rect x="33" y="22" width="2.5" height="2.5" rx="0.5" fill="#F3921F"/>
+            <path d="M45 14C48 11.5 52 11.5 55 14" stroke="#E65310" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M47 17.5C49 16 51 16 53 17.5" stroke="#E65310" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="50" cy="20.5" r="1.5" fill="#E65310"/>
+            <path d="M20 46C20 35 26 28 33 28C39 28 43 32 43 36C43 39 40 41 37 41L36 47C42 47 49 42 51 33C53 38 52 46 45 51C39 55 26 55 20 46Z" fill="#F3921F"/>
+            <path d="M25 38L38 41" stroke="#54280B" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="31" cy="44" r="2" fill="#FFFFFF"/>
+          </svg>
+          <span class="font-brand font-bold text-base"><span class="text-[#E65310]">Happy</span><span class="text-[#F3921F]">Tails</span></span>
+        </div>
+      </div>
+      <div class="hidden xs:block">
+        <span class="text-[10px] font-extrabold tracking-widest text-ht-orange uppercase block">SMART, LDA. • INTRANET</span>
+      </div>
+    </div>
+    <button id="mobile-menu-btn" class="p-2 rounded-xl text-ht-brown hover:bg-ht-sand" aria-label="Abrir Menu">
+      <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+  </header>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-76 bg-white border-r border-ht-border flex flex-col justify-between transform -translate-x-full md:translate-x-0 md:static transition-transform duration-200 ease-in-out shadow-sm md:shadow-none">
+    <div>
+      <!-- Official Brand Header with assets/logo.png & Fallback SVG -->
+      <div class="p-4 border-b border-ht-border bg-gradient-to-b from-ht-cream to-white">
+        <div class="flex items-start justify-between gap-2">
+          <!-- Cartão Branco Arredondado para Destacar o Logótipo Oficial -->
+          <div class="flex-1 bg-white rounded-2xl border border-ht-border p-3 shadow-2xs flex flex-col items-center justify-center">
+            <img src="assets/logo.png" alt="Logótipo Oficial Happy Tails Smart, Lda."
+                 class="max-h-24 w-auto object-contain mx-auto"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            
+            <!-- Fallback Vetorial Fiel ao Logótipo Oficial (caso assets/logo.png não seja encontrado) -->
+            <div style="display:none;" class="flex-col items-center justify-center py-1">
+              <svg class="w-20 h-16" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Happy Tails Smart, Lda.">
+                <!-- Arco laranja envolvente -->
+                <path d="M35 6C19 7 9 19 10 35C11 47 20 56 32 59" stroke="#E65310" stroke-width="3.5" stroke-linecap="round"/>
+                <!-- Casinha castanha -->
+                <path d="M20 33V23L38 11L56 23V33" stroke="#54280B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Janela 4 quadrados dourados -->
+                <rect x="35" y="17.5" width="2.6" height="2.6" rx="0.5" fill="#F3921F"/>
+                <rect x="39" y="17.5" width="2.6" height="2.6" rx="0.5" fill="#F3921F"/>
+                <rect x="35" y="21.5" width="2.6" height="2.6" rx="0.5" fill="#F3921F"/>
+                <rect x="39" y="21.5" width="2.6" height="2.6" rx="0.5" fill="#F3921F"/>
+                <!-- Sinal Wi-Fi laranja -->
+                <path d="M53 13C56.5 10 61.5 10 65 13" stroke="#E65310" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M55.5 16.5C57.5 14.8 60.5 14.8 62.5 16.5" stroke="#E65310" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="59" cy="20" r="1.7" fill="#E65310"/>
+                <!-- Cão dourado sorridente com cauda abanando -->
+                <path d="M24 48C24 36 31 28 39 28C45 28 50 32 50 37C50 40 46.5 42 43 42L42 49C49 49 57 43 59 33C62 39 60 48 52 53C45 57 31 57 24 48Z" fill="#F3921F"/>
+                <!-- Coleira castanha e pingente coração -->
+                <path d="M29 39.5L44 42.5" stroke="#54280B" stroke-width="2.6" stroke-linecap="round"/>
+                <circle cx="36" cy="45.5" r="2.2" fill="#FFFFFF"/>
+              </svg>
+              <div class="font-brand font-bold text-xl tracking-tight leading-none mt-0.5">
+                <span class="text-[#E65310]">Happy</span><span class="text-[#F3921F]">Tails</span>
+              </div>
+            </div>
+          </div>
+
+          <button id="close-sidebar-btn" class="md:hidden p-1.5 rounded-lg text-ht-brown/60 hover:text-ht-brown">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Subtítulo Institucional -->
+        <div class="mt-2.5 flex items-center justify-between px-1">
+          <span class="text-[10px] font-extrabold tracking-widest text-ht-orange uppercase">SMART, LDA.</span>
+          <span class="text-[11px] text-ht-brown/75 flex items-center gap-1.5 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+            Coimbra • Circular + Agile
+          </span>
+        </div>
+      </div>
+
+      <!-- Active User / Circle Lead Switcher -->
+      <div class="p-4 bg-ht-sand/70 border-b border-ht-border">
+        <label for="user-switcher" class="block text-[10px] font-bold uppercase tracking-wider text-ht-brown/60 mb-2">
+          Sessão Ativa (Simular Círculo)
+        </label>
+        <div class="relative">
+          <select id="user-switcher" class="w-full appearance-none bg-white border border-ht-border hover:border-ht-orange rounded-xl pl-3.5 pr-9 py-2.5 text-xs font-bold text-ht-brown shadow-2xs focus:outline-none focus:ring-2 focus:ring-ht-orange/25 transition cursor-pointer">
+            <option value="nathana">Nathana Cantero (Admin & RGPD)</option>
+            <option value="andreia">Andreia (Tech & Logística)</option>
+            <option value="flavia">Flávia (Operações & Creche)</option>
+          </select>
+          <i data-lucide="chevrons-up-down" class="w-4 h-4 text-ht-orange absolute right-3 top-2.5 pointer-events-none"></i>
+        </div>
+        <!-- Active User Badge Card -->
+        <div id="active-user-card" class="mt-3 p-3 rounded-xl bg-white border border-ht-border shadow-2xs flex items-center gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-3.5 space-y-1.5">
+        <p class="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-ht-brown/50">
+          Comunicação & Gestão Visual
+        </p>
+        <button onclick="switchTab('kanban')" id="nav-kanban" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-ht-orange text-white shadow-xs">
+          <span class="flex items-center gap-3">
+            <i data-lucide="kanban" class="w-4 h-4"></i>
+            Quadro Kanban Partilhado
+          </span>
+          <span id="badge-kanban-count" class="text-[11px] bg-white text-ht-orange px-2 py-0.5 rounded-full font-extrabold">0</span>
+        </button>
+
+        <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-ht-brown/80 hover:bg-ht-sand transition-all">
+          <span class="flex items-center gap-3">
+            <i data-lucide="message-square" class="w-4 h-4 text-ht-orange"></i>
+            Canais Temáticos
+          </span>
+          <span class="text-[10px] bg-ht-orange/15 text-ht-orange px-2 py-0.5 rounded-full font-bold">4 canais</span>
+        </button>
+
+        <button onclick="switchTab('governance')" id="nav-governance" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-ht-brown/80 hover:bg-ht-sand transition-all">
+          <span class="flex items-center gap-3">
+            <i data-lucide="shield-check" class="w-4 h-4 text-ht-orange"></i>
+            Matriz & Protocolo E-mail
+          </span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer: Radical Transparency Notice & Reset Demo -->
+    <div class="p-4 border-t border-ht-border space-y-3 bg-ht-cream/80">
+      <div class="p-3.5 rounded-xl bg-white border border-ht-border shadow-2xs">
+        <div class="flex items-center gap-2 text-ht-orange font-bold text-xs mb-1">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          Transparência Radical
+        </div>
+        <p class="text-[11px] text-ht-brown/80 leading-relaxed">
+          Histórico aberto a todos os círculos. E-mail restrito a contratos e comunicações externas.
+        </p>
+      </div>
+
+      <button onclick="confirmResetDemo()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-ht-border bg-white hover:bg-ht-sand text-xs font-semibold text-ht-brown transition shadow-2xs">
+        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-ht-orange"></i>
+        Repor Dados de Demonstração
+      </button>
+    </div>
+  </aside>
+
+  <!-- MOBILE BACKDROP -->
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-ht-brownDeep/40 z-30 hidden md:hidden"></div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 flex flex-col min-w-0 max-h-screen overflow-y-auto watermark-bg">
+    
+    <!-- Top Contextual Header -->
+    <header class="bg-white/95 backdrop-blur-xs border-b border-ht-border px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sticky top-0 z-20">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <h2 id="view-title" class="font-brand text-xl sm:text-2xl font-bold text-ht-brown tracking-tight">Quadro Kanban Partilhado</h2>
+          <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-ht-cream text-ht-orange border border-ht-border">
+            <span class="w-1.5 h-1.5 rounded-full bg-ht-orange animate-pulse"></span> Transparência Radical
+          </span>
+        </div>
+        <p id="view-subtitle" class="text-xs text-ht-brown/75 mt-0.5 font-medium">
+          Gestão visual centralizada: todas as tarefas visíveis entre círculos sem pedidos de ponto de situação.
+        </p>
+      </div>
+
+      <!-- Quick Global Actions -->
+      <div class="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+        <a href="https://nathanaananias.github.io/happytails-editor/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-ht-border bg-ht-cream hover:bg-ht-sand text-ht-brown text-xs font-semibold transition shadow-2xs" title="Abrir Papel Timbrado Digital — Happy Tails Editor">
+          <i data-lucide="file-text" class="w-4 h-4 text-ht-orange"></i>
+          <span>Papel Timbrado Digital</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-ht-brown/50"></i>
+        </a>
+
+        <button onclick="openTaskModal()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ht-orange hover:bg-ht-orangeHover text-white text-xs font-bold transition shadow-sm shadow-ht-orange/25">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Nova Tarefa</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         MODULE 1: QUADRO KANBAN PARTILHADO
+         ===================================================================== -->
+    <section id="view-kanban" class="p-4 sm:p-6 flex-1 flex flex-col gap-5">
+      
+      <!-- Filter & Metrics Strip -->
+      <div class="bg-white p-3.5 rounded-2xl border border-ht-border shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <!-- Circle Filter Pills -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-[11px] font-bold text-ht-brown/60 uppercase tracking-wider mr-1 flex items-center gap-1">
+            <i data-lucide="filter" class="w-3.5 h-3.5 text-ht-orange"></i> Círculo:
+          </span>
+          <button onclick="setKanbanFilter('all')" data-filter="all" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-bold bg-ht-brown text-white transition">
+            Todos os Círculos
+          </button>
+          <button onclick="setKanbanFilter('ops')" data-filter="ops" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-ht-orange/15 text-ht-orange hover:bg-ht-orange/25 transition">
+            Operações & Creche
+          </button>
+          <button onclick="setKanbanFilter('tech')" data-filter="tech" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1E6F78]/15 text-[#1E6F78] hover:bg-[#1E6F78]/25 transition">
+            Tech & Logística
+          </button>
+          <button onclick="setKanbanFilter('admin')" data-filter="admin" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-ht-brown/10 text-ht-brown hover:bg-ht-brown/20 transition">
+            Admin & RGPD
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full lg:w-64">
+          <i data-lucide="search" class="w-4 h-4 text-ht-brown/40 absolute left-3 top-2.5"></i>
+          <input type="text" id="kanban-search" oninput="renderKanban()" placeholder="Pesquisar tarefa ou líder..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-ht-cream border border-ht-border rounded-xl text-ht-brown placeholder:text-ht-brown/45 focus:outline-none focus:bg-white focus:border-ht-orange transition">
+        </div>
+      </div>
+
+      <!-- 3-Column Kanban Board -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 items-start">
+        
+        <!-- COLUMN 1: A FAZER -->
+        <div class="bg-ht-sand/85 border border-ht-border rounded-2xl p-3.5 flex flex-col gap-3 min-h-[420px] transition-colors"
+             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'todo')">
+          <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-ht-brown/50"></span>
+              <h3 class="font-brand font-bold text-ht-brown text-base">A Fazer</h3>
+            </div>
+            <span id="count-todo" class="text-xs font-extrabold bg-white text-ht-brown px-2.5 py-0.5 rounded-full border border-ht-border">0</span>
+          </div>
+          <div id="col-todo" class="space-y-3 flex-1"></div>
+        </div>
+
+        <!-- COLUMN 2: EM CURSO -->
+        <div class="bg-ht-sand/85 border border-ht-border rounded-2xl p-3.5 flex flex-col gap-3 min-h-[420px] transition-colors"
+             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'doing')">
+          <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-ht-orange animate-pulse"></span>
+              <h3 class="font-brand font-bold text-ht-brown text-base">Em Curso</h3>
+            </div>
+            <span id="count-doing" class="text-xs font-extrabold bg-ht-orange/15 text-ht-orange px-2.5 py-0.5 rounded-full border border-ht-orange/30">0</span>
+          </div>
+          <div id="col-doing" class="space-y-3 flex-1"></div>
+        </div>
+
+        <!-- COLUMN 3: CONCLUÍDO -->
+        <div class="bg-ht-sand/85 border border-ht-border rounded-2xl p-3.5 flex flex-col gap-3 min-h-[420px] transition-colors"
+             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'done')">
+          <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+              <h3 class="font-brand font-bold text-ht-brown text-base">Concluído</h3>
+            </div>
+            <span id="count-done" class="text-xs font-extrabold bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">0</span>
+          </div>
+          <div id="col-done" class="space-y-3 flex-1"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 2: CANAIS TEMÁTICOS (MENSAGENS INSTANTÂNEAS)
+         ===================================================================== -->
+    <section id="view-chat" class="hidden p-4 sm:p-6 flex-1 flex flex-col">
+      <div class="bg-white border border-ht-border rounded-2xl shadow-2xs flex-1 flex flex-col md:flex-row overflow-hidden min-h-[560px]">
+        
+        <!-- Channels List Sidebar -->
+        <div class="w-full md:w-72 bg-ht-cream border-b md:border-b-0 md:border-r border-ht-border p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-ht-brown/60">Canais por Círculo</span>
+              <span class="text-[10px] text-ht-orange font-bold bg-ht-orange/10 px-2 py-0.5 rounded-md">Sem Ruído</span>
+            </div>
+            <div id="channel-list" class="space-y-1.5">
+              <!-- Channels rendered via JS -->
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-ht-border hidden md:block">
+            <p class="text-[11px] text-ht-brown/75 leading-relaxed">
+              <strong class="text-ht-brown">Fluxo Ágil:</strong> Clique em <span class="text-ht-orange font-bold">"Converter em Tarefa Kanban"</span> em qualquer mensagem para transformá-la em ação visível.
+            </p>
+          </div>
+        </div>
+
+        <!-- Active Channel Stream -->
+        <div class="flex-1 flex flex-col bg-white min-w-0">
+          <!-- Channel Header -->
+          <div id="active-channel-header" class="px-5 py-3.5 border-b border-ht-border flex items-center justify-between bg-white">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Messages Feed -->
+          <div id="chat-messages" class="flex-1 p-5 space-y-4 overflow-y-auto max-h-[430px] bg-ht-cream/50">
+            <!-- Messages rendered by JS -->
+          </div>
+
+          <!-- Composer -->
+          <form id="chat-form" onsubmit="sendChatMessage(event)" class="p-3.5 border-t border-ht-border bg-white">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[11px] text-ht-brown/60 font-medium">A publicar como:</span>
+              <span id="composer-user-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-ht-sand text-ht-brown border border-ht-border"></span>
+            </div>
+            <div class="flex gap-2">
+              <input type="text" id="chat-input" required placeholder="Escreva uma atualização rápida para este canal..." class="flex-1 bg-ht-cream border border-ht-border rounded-xl px-4 py-2.5 text-xs sm:text-sm text-ht-brown placeholder:text-ht-brown/45 focus:outline-none focus:bg-white focus:border-ht-orange transition">
+              <button type="submit" class="px-4 py-2.5 rounded-xl bg-ht-orange hover:bg-ht-orangeHover text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition shadow-xs">
+                <span class="hidden sm:inline">Enviar</span>
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 3: MATRIZ DE CANAIS & PROTOCOLO DE E-MAIL FORMAL
+         ===================================================================== -->
+    <section id="view-governance" class="hidden p-4 sm:p-6 space-y-6">
+      
+      <!-- Banner: Adequação dos Canais -->
+      <div class="bg-gradient-to-r from-ht-brown to-[#734A22] rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+        <div class="max-w-3xl relative z-10">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ht-orange text-white text-xs font-bold mb-3 shadow-xs">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Governança Organizacional • Happy Tails Smart, Lda.
+          </span>
+          <h3 class="font-brand text-xl sm:text-2xl font-bold tracking-tight">Adequação dos Canais: Transparência Radical e Gestão Visual</h3>
+          <p class="text-xs sm:text-sm text-ht-cream/90 mt-2 leading-relaxed">
+            No modelo <strong>Circular + Agile</strong>, eliminamos o ruído de caixas de entrada sobrecarregadas. O trabalho operacional vive na Intranet (Kanban + Canais Temáticos), enquanto o <strong>e-mail fica reservado exclusivamente a atos formais, contratuais ou externos</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Comparison Cards: Intranet vs Formal Email -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Card 1: Comunicação Interna Ágil -->
+        <div class="bg-white rounded-2xl border border-ht-border p-6 shadow-2xs space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-ht-orange/15 text-ht-orange flex items-center justify-center">
+              <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-brand font-bold text-ht-brown text-lg">1. Intranet Circular + Agile (Uso Diário)</h4>
+              <p class="text-xs text-ht-brown/65 font-medium">Quadro Kanban Partilhado & Canais Temáticos</p>
+            </div>
+          </div>
+
+          <ul class="space-y-3 text-xs sm:text-sm text-ht-brown/85">
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-ht-orange mt-0.5 shrink-0"></i>
+              <span><strong>Zero pedidos de ponto de situação:</strong> O estado de cada tarefa (<em>A Fazer, Em Curso, Concluído</em>) está visível a todas as sócias.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-ht-orange mt-0.5 shrink-0"></i>
+              <span><strong>Segmentação por Círculo:</strong> Mensagens direcionadas em <code class="text-xs bg-ht-sand px-1.5 py-0.5 rounded font-semibold text-ht-brown">#operacoes-creche</code>, <code class="text-xs bg-ht-sand px-1.5 py-0.5 rounded font-semibold text-ht-brown">#tech-logistica</code> e <code class="text-xs bg-ht-sand px-1.5 py-0.5 rounded font-semibold text-ht-brown">#admin-rgpd</code>.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-ht-orange mt-0.5 shrink-0"></i>
+              <span><strong>Histórico Aberto:</strong> Qualquer círculo pode consultar decisões anteriores sem precisar de ser colocado em "CC".</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 2: E-mail Formal & Documentação Oficial -->
+        <div class="bg-white rounded-2xl border border-ht-border p-6 shadow-2xs space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-ht-brown/10 text-ht-brown flex items-center justify-center">
+              <i data-lucide="mail-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-brand font-bold text-ht-brown text-lg">2. E-mail Formal & Papel Timbrado (Restrito)</h4>
+              <p class="text-xs text-ht-brown/65 font-medium">Comunicações Externas, Contratuais & Legais</p>
+            </div>
+          </div>
+
+          <ul class="space-y-3 text-xs sm:text-sm text-ht-brown/85">
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="shield" class="w-4 h-4 text-ht-brown mt-0.5 shrink-0"></i>
+              <span><strong>Contratos & RGPD:</strong> Envio de contratos de prestação de serviços, adendas e termos de consentimento aos tutores.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="shield" class="w-4 h-4 text-ht-brown mt-0.5 shrink-0"></i>
+              <span><strong>Parceiros & Fornecedores:</strong> Encomendas oficiais e faturação com a <em>Farmina Pet Foods</em>, veterinários parceiros e contabilidade.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="shield" class="w-4 h-4 text-ht-brown mt-0.5 shrink-0"></i>
+              <span><strong>Entidades Públicas:</strong> Comunicações formais com a Câmara Municipal de Coimbra, DGAV ou Segurança Social.</span>
+            </li>
+          </ul>
+
+          <div class="pt-2">
+            <a href="https://nathanaananias.github.io/happytails-editor/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ht-orange hover:bg-ht-orangeHover text-white text-xs font-bold transition shadow-xs">
+              <i data-lucide="file-signature" class="w-4 h-4"></i>
+              Abrir Papel Timbrado Digital — Happy Tails Editor
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Circles Directory Table -->
+      <div class="bg-white rounded-2xl border border-ht-border overflow-hidden shadow-2xs">
+        <div class="px-6 py-4 border-b border-ht-border bg-ht-cream/60 flex items-center justify-between">
+          <div>
+            <h4 class="font-brand font-bold text-ht-brown text-lg">Diretório de Círculos & Responsabilidades</h4>
+            <p class="text-xs text-ht-brown/65 font-medium">Estrutura horizontal e autónoma da Happy Tails Smart, Lda.</p>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-ht-sand/70 border-b border-ht-border text-[11px] font-bold uppercase tracking-wider text-ht-brown/70">
+                <th class="py-3 px-6">Círculo</th>
+                <th class="py-3 px-6">Líder / Elo</th>
+                <th class="py-3 px-6">Âmbito de Decisão</th>
+                <th class="py-3 px-6">Canal Principal</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-ht-border text-xs sm:text-sm">
+              <tr>
+                <td class="py-3.5 px-6">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-ht-orange/15 text-ht-orange">Operações & Creche</span>
+                </td>
+                <td class="py-3.5 px-6 font-bold text-ht-brown">Flávia</td>
+                <td class="py-3.5 px-6 text-ht-brown/80">Acolhimento canino, escalas de passeios, relatórios diários e protocolos de bem-estar.</td>
+                <td class="py-3.5 px-6"><code class="text-xs bg-ht-sand px-2 py-1 rounded font-semibold text-ht-brown">#operacoes-creche</code></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-6">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-[#1E6F78]/15 text-[#1E6F78]">Tech & Logística</span>
+                </td>
+                <td class="py-3.5 px-6 font-bold text-ht-brown">Andreia</td>
+                <td class="py-3.5 px-6 text-ht-brown/80">Coleiras smart IoT, sensores ambientais, app de tutores e gestão de stock Farmina.</td>
+                <td class="py-3.5 px-6"><code class="text-xs bg-ht-sand px-2 py-1 rounded font-semibold text-ht-brown">#tech-logistica</code></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-6">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-ht-brown/12 text-ht-brown">Admin, Jurídico & RGPD</span>
+                </td>
+                <td class="py-3.5 px-6 font-bold text-ht-brown">Nathana Cantero</td>
+                <td class="py-3.5 px-6 text-ht-brown/80">Secretariado executivo, contratos, conformidade RGPD e representação institucional.</td>
+                <td class="py-3.5 px-6"><code class="text-xs bg-ht-sand px-2 py-1 rounded font-semibold text-ht-brown">#admin-rgpd</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       MODAL: NOVA TAREFA KANBAN
+       ===================================================================== -->
+  <div id="task-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ht-brownDeep/50 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full border border-ht-border shadow-xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-ht-border bg-ht-cream flex items-center justify-between">
+        <h3 class="font-brand font-bold text-ht-brown text-lg">Nova Tarefa no Quadro Partilhado</h3>
+        <button onclick="closeTaskModal()" class="text-ht-brown/50 hover:text-ht-brown p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="task-form" onsubmit="saveNewTask(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-ht-brown mb-1.5">Título da Tarefa *</label>
+          <input type="text" id="task-title" required placeholder="Ex.: Rever protocolo de acolhimento..." class="w-full border border-ht-border bg-ht-cream/50 rounded-xl px-3.5 py-2.5 text-sm text-ht-brown focus:outline-none focus:bg-white focus:border-ht-orange">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-ht-brown mb-1.5">Círculo</label>
+            <select id="task-circle" class="w-full border border-ht-border rounded-xl px-3 py-2.5 text-xs font-semibold text-ht-brown bg-white focus:outline-none focus:border-ht-orange">
+              <option value="ops">Operações & Creche</option>
+              <option value="tech">Tech & Logística</option>
+              <option value="admin">Admin & RGPD</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-ht-brown mb-1.5">Responsável</label>
+            <select id="task-assignee" class="w-full border border-ht-border rounded-xl px-3 py-2.5 text-xs font-semibold text-ht-brown bg-white focus:outline-none focus:border-ht-orange">
+              <option value="Flávia">Flávia</option>
+              <option value="Andreia">Andreia</option>
+              <option value="Nathana Cantero">Nathana Cantero</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-ht-brown mb-1.5">Prioridade</label>
+            <select id="task-priority" class="w-full border border-ht-border rounded-xl px-3 py-2.5 text-xs font-semibold text-ht-brown bg-white focus:outline-none focus:border-ht-orange">
+              <option value="Normal">Normal</option>
+              <option value="Alta">Alta</option>
+              <option value="Urgente">Urgente</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-ht-brown mb-1.5">Prazo</label>
+            <input type="date" id="task-due" required class="w-full border border-ht-border rounded-xl px-3 py-2 text-xs font-semibold text-ht-brown focus:outline-none focus:border-ht-orange">
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeTaskModal()" class="px-4 py-2 rounded-xl border border-ht-border text-xs font-semibold text-ht-brown hover:bg-ht-sand">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-ht-orange hover:bg-ht-orangeHover text-white text-xs font-bold shadow-xs">
+            Criar Tarefa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL: CONFIRMAÇÃO DE REPOSIÇÃO
+       ===================================================================== -->
+  <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-ht-brownDeep/50 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full border border-ht-border shadow-xl p-6 space-y-4">
+      <div class="flex items-center gap-3 text-ht-orange">
+        <div class="w-10 h-10 rounded-full bg-ht-orange/15 flex items-center justify-center shrink-0">
+          <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+        </div>
+        <h3 class="font-brand font-bold text-ht-brown text-lg">Repor Dados de Demonstração?</h3>
+      </div>
+      <p class="text-xs sm:text-sm text-ht-brown/80 leading-relaxed">
+        Isto irá restaurar as tarefas iniciais do Quadro Kanban e as mensagens originais dos canais da Happy Tails Smart, Lda.
+      </p>
+      <div class="flex justify-end gap-2.5 pt-2">
+        <button onclick="closeResetModal()" class="px-4 py-2 rounded-xl border border-ht-border text-xs font-semibold text-ht-brown hover:bg-ht-sand">
+          Cancelar
+        </button>
+        <button onclick="executeResetDemo()" class="px-4 py-2 rounded-xl bg-ht-orange hover:bg-ht-orangeHover text-white text-xs font-bold">
+          Sim, Repor
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- =====================================================================
+       APPLICATION LOGIC (JAVASCRIPT)
+       ===================================================================== -->
+  <script>
+    // 1. ORGANIZATIONAL DATA & HARMONIZED HAPPY TAILS PALETTE
+    const USERS = {
+      nathana: {
+        id: 'nathana',
+        name: 'Nathana Cantero',
+        shortName: 'Nathana',
+        role: 'Círculo Admin, Jurídico & RGPD',
+        circleKey: 'admin',
+        initials: 'NC',
+        avatarBg: 'bg-[#5A3A1A]',
+        badgeClass: 'bg-[#5A3A1A]/10 text-[#5A3A1A] border-[#5A3A1A]/25'
+      },
+      andreia: {
+        id: 'andreia',
+        name: 'Andreia',
+        shortName: 'Andreia',
+        role: 'Círculo Tech & Logística',
+        circleKey: 'tech',
+        initials: 'AN',
+        avatarBg: 'bg-[#1E6F78]',
+        badgeClass: 'bg-[#1E6F78]/12 text-[#1E6F78] border-[#1E6F78]/25'
+      },
+      flavia: {
+        id: 'flavia',
+        name: 'Flávia',
+        shortName: 'Flávia',
+        role: 'Círculo Operações & Creche',
+        circleKey: 'ops',
+        initials: 'FL',
+        avatarBg: 'bg-[#E76F2A]',
+        badgeClass: 'bg-[#E76F2A]/12 text-[#E76F2A] border-[#E76F2A]/25'
+      }
+    };
+
+    const CIRCLES = {
+      ops:   { label: 'Operações & Creche', pillClass: 'bg-[#E76F2A]/12 text-[#E76F2A] border border-[#E76F2A]/25' },
+      tech:  { label: 'Tech & Logística', pillClass: 'bg-[#1E6F78]/12 text-[#1E6F78] border border-[#1E6F78]/25' },
+      admin: { label: 'Admin & RGPD', pillClass: 'bg-[#5A3A1A]/10 text-[#5A3A1A] border border-[#5A3A1A]/25' }
+    };
+
+    const CHANNELS = [
+      {
+        id: 'operacoes-creche',
+        name: '#operacoes-creche',
+        desc: 'Operações diárias, turnos, acolhimento e bem-estar canino.',
+        circle: 'Operações & Creche',
+        urgent: false
+      },
+      {
+        id: 'tech-logistica',
+        name: '#tech-logistica',
+        desc: 'App tutores, coleiras smart IoT e stock Farmina Coimbra.',
+        circle: 'Tech & Logística',
+        urgent: false
+      },
+      {
+        id: 'admin-rgpd',
+        name: '#admin-rgpd',
+        desc: 'Contratos, proteção de dados (RGPD) e protocolo executivo.',
+        circle: 'Admin & RGPD',
+        urgent: false
+      },
+      {
+        id: 'urgencias-animais',
+        name: '#urgencias-animais',
+        desc: 'Canal prioritário de alerta veterinário e segurança na creche.',
+        circle: 'Transversal',
+        urgent: true
+      }
+    ];
+
+    const DEFAULT_TASKS = [
+      {
+        id: 't-1',
+        title: 'Validar contratos de prestação de serviços e consentimento RGPD',
+        circle: 'admin',
+        assignee: 'Nathana Cantero',
+        priority: 'Alta',
+        due: '2026-11-25',
+        status: 'doing'
+      },
+      {
+        id: 't-2',
+        title: 'Calibrar sensores de temperatura e coleiras smart na sala 2',
+        circle: 'tech',
+        assignee: 'Andreia',
+        priority: 'Urgente',
+        due: '2026-11-24',
+        status: 'doing'
+      },
+      {
+        id: 't-3',
+        title: 'Confirmar entrega de stock ração Farmina Coimbra',
+        circle: 'tech',
+        assignee: 'Andreia',
+        priority: 'Normal',
+        due: '2026-11-26',
+        status: 'todo'
+      },
+      {
+        id: 't-4',
+        title: 'Atualizar escala de passeios e relatórios diários dos tutores',
+        circle: 'ops',
+        assignee: 'Flávia',
+        priority: 'Alta',
+        due: '2026-11-24',
+        status: 'todo'
+      },
+      {
+        id: 't-5',
+        title: 'Registo de protocolo de higienização semanal das boxes',
+        circle: 'ops',
+        assignee: 'Flávia',
+        priority: 'Normal',
+        due: '2026-11-22',
+        status: 'done'
+      },
+      {
+        id: 't-6',
+        title: 'Publicar política de privacidade atualizada no portal do tutor',
+        circle: 'admin',
+        assignee: 'Nathana Cantero',
+        priority: 'Normal',
+        due: '2026-11-21',
+        status: 'done'
+      }
+    ];
+
+    const DEFAULT_MESSAGES = {
+      'operacoes-creche': [
+        {
+          id: 'm-1',
+          userId: 'flavia',
+          text: 'Bom dia equipa! Os 14 patudos do turno da manhã já fizeram o check-in sem stress. O Max e a Luna ficaram juntos no parque interior.',
+          time: '09:15'
+        },
+        {
+          id: 'm-2',
+          userId: 'nathana',
+          text: 'Excelente Flávia! Nota que a tutora da Bela assinou hoje a autorização de captação de imagem para os relatórios diários.',
+          time: '09:28'
+        },
+        {
+          id: 'm-3',
+          userId: 'flavia',
+          text: 'Perfeito, já atualizei a ficha dela. Precisamos apenas de repor sacos biodegradáveis no dispensador do pátio exterior antes de quinta-feira.',
+          time: '10:05'
+        }
+      ],
+      'tech-logistica': [
+        {
+          id: 'm-4',
+          userId: 'andreia',
+          text: 'Atualizei o firmware das coleiras smart #04 e #07. A leitura de atividade cardíaca já está sincronizada com a app dos tutores.',
+          time: '10:12'
+        },
+        {
+          id: 'm-5',
+          userId: 'nathana',
+          text: 'Obrigada Andreia! Quando chegar a guia de remessa da Farmina, partilha aqui para arquivar na pasta contabilística.',
+          time: '10:30'
+        }
+      ],
+      'admin-rgpd': [
+        {
+          id: 'm-6',
+          userId: 'nathana',
+          text: 'Lembrete de Transparência Radical: todos os novos contratos devem usar o modelo timbrado revisto em novembro (disponível no Happy Tails Editor).',
+          time: '09:45'
+        },
+        {
+          id: 'm-7',
+          userId: 'andreia',
+          text: 'Confirmado! Já atualizei o link automático de descarregamento no formulário de pré-inscrição online.',
+          time: '10:18'
+        }
+      ],
+      'urgencias-animais': [
+        {
+          id: 'm-8',
+          userId: 'flavia',
+          text: 'Sem ocorrências clínicas hoje. Contacto da Clínica Veterinária Parceira de Coimbra testado e operacional na receção.',
+          time: '08:50'
+        }
+      ]
+    };
+
+    // 2. STATE MANAGEMENT (LOCALSTORAGE PERSISTENCE)
+    const STORAGE_KEY = 'happytails_intranet_state_v1';
+
+    let state = {
+      activeUser: 'nathana',
+      activeTab: 'kanban',
+      kanbanFilter: 'all',
+      activeChannel: 'operacoes-creche',
+      tasks: [],
+      messages: {}
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+        } else {
+          state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+          state.messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES));
+          saveState();
+        }
+      } catch (e) {
+        console.error('Erro ao carregar estado:', e);
+        state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+        state.messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES));
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Erro ao guardar estado:', e);
+      }
+    }
+
+    // 3. UI INITIALIZATION & USER SWITCHER
+    function initApp() {
+      loadState();
+
+      // Setup user switcher listener
+      const switcher = document.getElementById('user-switcher');
+      switcher.value = state.activeUser;
+      switcher.addEventListener('change', (e) => {
+        state.activeUser = e.target.value;
+        saveState();
+        renderActiveUserCard();
+        renderComposerUser();
+        showToast(`Sessão alterada para ${USERS[state.activeUser].name}`, 'info');
+      });
+
+      // Mobile sidebar toggles
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      });
+      const closeSidebar = () => {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      };
+      document.getElementById('close-sidebar-btn').addEventListener('click', closeSidebar);
+      backdrop.addEventListener('click', closeSidebar);
+
+      // Set default date in modal to tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      document.getElementById('task-due').value = tomorrow.toISOString().split('T')[0];
+
+      renderActiveUserCard();
+      renderComposerUser();
+      switchTab(state.activeTab, false);
+      renderKanban();
+      renderChannels();
+      lucide.createIcons();
+    }
+
+    function renderActiveUserCard() {
+      const user = USERS[state.activeUser];
+      const container = document.getElementById('active-user-card');
+      container.innerHTML = `
+        <div class="w-9 h-9 rounded-xl ${user.avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+          ${user.initials}
+        </div>
+        <div class="min-w-0">
+          <p class="text-xs font-bold text-slate-900 truncate">${user.name}</p>
+          <p class="text-[11px] text-slate-500 truncate">${user.role}</p>
+        </div>
+      `;
+    }
+
+    function renderComposerUser() {
+      const user = USERS[state.activeUser];
+      const badge = document.getElementById('composer-user-badge');
+      if (badge) {
+        badge.textContent = `${user.name} (${CIRCLES[user.circleKey].label})`;
+      }
+    }
+
+    // 4. NAVIGATION TABS
+    function switchTab(tabId, persist = true) {
+      state.activeTab = tabId;
+      if (persist) saveState();
+
+      // Hide all views
+      ['kanban', 'chat', 'governance'].forEach(id => {
+        document.getElementById(`view-${id}`).classList.add('hidden');
+        const navBtn = document.getElementById(`nav-${id}`);
+        navBtn.classList.remove('bg-ht-orange', 'text-white', 'shadow-xs');
+        navBtn.classList.add('text-ht-brown/80', 'hover:bg-ht-sand');
+      });
+
+      // Show active view
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      activeNav.classList.add('bg-ht-orange', 'text-white', 'shadow-xs');
+      activeNav.classList.remove('text-ht-brown/80', 'hover:bg-ht-sand');
+
+      // Update Header Titles
+      const titles = {
+        kanban: {
+          title: 'Quadro Kanban Partilhado',
+          subtitle: 'Gestão visual centralizada: todas as tarefas visíveis entre círculos sem pedidos de ponto de situação.'
+        },
+        chat: {
+          title: 'Canais Temáticos (Mensagens Instantâneas)',
+          subtitle: 'Comunicação segmentada por círculo com histórico aberto e conversão direta em tarefas.'
+        },
+        governance: {
+          title: 'Matriz de Canais & Protocolo de E-mail Formal',
+          subtitle: 'Regras de Transparência Radical da Happy Tails Smart, Lda. (Modelo Circular + Agile).'
+        }
+      };
+
+      document.getElementById('view-title').textContent = titles[tabId].title;
+      document.getElementById('view-subtitle').textContent = titles[tabId].subtitle;
+
+      // Close mobile drawer on navigation
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebar-backdrop').classList.add('hidden');
+
+      if (tabId === 'chat') renderChatStream();
+      lucide.createIcons();
+    }
+
+    // 5. MODULE 1: KANBAN BOARD LOGIC
+    function setKanbanFilter(filterKey) {
+      state.kanbanFilter = filterKey;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        const isSelected = btn.getAttribute('data-filter') === filterKey;
+        if (isSelected) {
+          btn.classList.add('ring-2', 'ring-offset-1', 'ring-ht-orange', 'font-bold');
+        } else {
+          btn.classList.remove('ring-2', 'ring-offset-1', 'ring-ht-orange', 'font-bold');
+        }
+      });
+      renderKanban();
+    }
+
+    function renderKanban() {
+      const searchQuery = (document.getElementById('kanban-search')?.value || '').toLowerCase().trim();
+      const cols = {
+        todo: document.getElementById('col-todo'),
+        doing: document.getElementById('col-doing'),
+        done: document.getElementById('col-done')
+      };
+
+      cols.todo.innerHTML = '';
+      cols.doing.innerHTML = '';
+      cols.done.innerHTML = '';
+
+      const filtered = state.tasks.filter(t => {
+        const matchesCircle = state.kanbanFilter === 'all' || t.circle === state.kanbanFilter;
+        const matchesSearch = !searchQuery ||
+          t.title.toLowerCase().includes(searchQuery) ||
+          t.assignee.toLowerCase().includes(searchQuery);
+        return matchesCircle && matchesSearch;
+      });
+
+      const counts = { todo: 0, doing: 0, done: 0 };
+
+      filtered.forEach(task => {
+        counts[task.status]++;
+        const circleMeta = CIRCLES[task.circle] || CIRCLES.ops;
+        const priorityBadge = getPriorityBadge(task.priority);
+
+        const card = document.createElement('div');
+        card.className = 'kanban-card bg-white p-4 rounded-xl border border-ht-border shadow-2xs space-y-3 cursor-grab active:cursor-grabbing';
+        card.draggable = true;
+        card.ondragstart = (e) => {
+          e.dataTransfer.setData('text/plain', task.id);
+          card.classList.add('dragging');
+        };
+        card.ondragend = () => card.classList.remove('dragging');
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-lg ${circleMeta.pillClass}">
+              ${circleMeta.label}
+            </span>
+            <div class="flex items-center gap-1.5">
+              ${priorityBadge}
+              <button onclick="deleteTask('${task.id}')" class="text-ht-brown/35 hover:text-[#C83E2B] p-1 rounded transition" title="Eliminar tarefa">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm font-semibold text-ht-brown leading-snug ${task.status === 'done' ? 'line-through text-ht-brown/45' : ''}">
+            ${escapeHTML(task.title)}
+          </p>
+
+          <div class="pt-2 border-t border-ht-border/70 flex items-center justify-between text-xs text-ht-brown/70">
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-ht-brown text-white text-[10px] font-bold flex items-center justify-center">
+                ${getInitials(task.assignee)}
+              </span>
+              <span class="font-semibold text-ht-brown">${escapeHTML(task.assignee.split(' ')[0])}</span>
+            </div>
+            <span class="flex items-center gap-1 text-[11px] text-ht-brown/60 font-medium">
+              <i data-lucide="calendar" class="w-3 h-3 text-ht-orange"></i>
+              ${formatDatePT(task.due)}
+            </span>
+          </div>
+
+          <!-- Move Controls for Accessibility & Mobile -->
+          <div class="flex items-center justify-between pt-1 gap-2">
+            ${task.status !== 'todo' ? `
+              <button onclick="moveTask('${task.id}', -1)" class="flex-1 py-1.5 px-2 rounded-lg bg-ht-cream hover:bg-ht-sand text-ht-brown text-[11px] font-semibold flex items-center justify-center gap-1 transition border border-ht-border/60">
+                <i data-lucide="arrow-left" class="w-3 h-3"></i> Recuar
+              </button>
+            ` : '<div></div>'}
+            
+            ${task.status !== 'done' ? `
+              <button onclick="moveTask('${task.id}', 1)" class="flex-1 py-1.5 px-2 rounded-lg bg-ht-orange/12 hover:bg-ht-orange hover:text-white text-ht-orange text-[11px] font-bold flex items-center justify-center gap-1 transition">
+                Avançar <i data-lucide="arrow-right" class="w-3 h-3"></i>
+              </button>
+            ` : `
+              <span class="text-[11px] font-bold text-emerald-700 flex items-center gap-1 ml-auto">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i> Concluída
+              </span>
+            `}
+          </div>
+        `;
+
+        cols[task.status].appendChild(card);
+      });
+
+      // Empty states
+      ['todo', 'doing', 'done'].forEach(status => {
+        if (counts[status] === 0) {
+          cols[status].innerHTML = `
+            <div class="border-2 border-dashed border-ht-border rounded-xl p-6 text-center text-xs text-ht-brown/50 font-medium">
+              Sem tarefas nesta coluna
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('count-todo').textContent = counts.todo;
+      document.getElementById('count-doing').textContent = counts.doing;
+      document.getElementById('count-done').textContent = counts.done;
+      document.getElementById('badge-kanban-count').textContent = state.tasks.filter(t => t.status !== 'done').length;
+
+      lucide.createIcons();
+    }
+
+    function moveTask(taskId, direction) {
+      const order = ['todo', 'doing', 'done'];
+      const task = state.tasks.find(t => t.id === taskId);
+      if (!task) return;
+      const idx = order.indexOf(task.status);
+      const nextIdx = idx + direction;
+      if (nextIdx >= 0 && nextIdx < order.length) {
+        task.status = order[nextIdx];
+        saveState();
+        renderKanban();
+      }
+    }
+
+    function deleteTask(taskId) {
+      state.tasks = state.tasks.filter(t => t.id !== taskId);
+      saveState();
+      renderKanban();
+      showToast('Tarefa removida do quadro.', 'info');
+    }
+
+    // Drag and Drop Handlers
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+    function handleDrop(e, targetStatus) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const taskId = e.dataTransfer.getData('text/plain');
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.status !== targetStatus) {
+        task.status = targetStatus;
+        saveState();
+        renderKanban();
+        showToast('Estado da tarefa atualizado!', 'success');
+      }
+    }
+
+    // Task Modal
+    function openTaskModal() {
+      const modal = document.getElementById('task-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      // Pre-select circle matching active user
+      const user = USERS[state.activeUser];
+      document.getElementById('task-circle').value = user.circleKey;
+      document.getElementById('task-assignee').value = user.name;
+      document.getElementById('task-title').focus();
+    }
+
+    function closeTaskModal() {
+      const modal = document.getElementById('task-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('task-form').reset();
+    }
+
+    function saveNewTask(e) {
+      e.preventDefault();
+      const title = document.getElementById('task-title').value.trim();
+      const circle = document.getElementById('task-circle').value;
+      const assignee = document.getElementById('task-assignee').value;
+      const priority = document.getElementById('task-priority').value;
+      const due = document.getElementById('task-due').value;
+
+      if (!title) return;
+
+      state.tasks.unshift({
+        id: 't-' + Date.now(),
+        title,
+        circle,
+        assignee,
+        priority,
+        due,
+        status: 'todo'
+      });
+
+      saveState();
+      closeTaskModal();
+      switchTab('kanban');
+      renderKanban();
+      showToast('Nova tarefa adicionada a "A Fazer"!', 'success');
+    }
+
+    // 6. MODULE 2: THEMATIC CHANNELS (CHAT)
+    function renderChannels() {
+      const list = document.getElementById('channel-list');
+      list.innerHTML = '';
+
+      CHANNELS.forEach(ch => {
+        const isActive = state.activeChannel === ch.id;
+        const msgCount = (state.messages[ch.id] || []).length;
+
+        const btn = document.createElement('button');
+        btn.onclick = () => {
+          state.activeChannel = ch.id;
+          saveState();
+          renderChannels();
+          renderChatStream();
+        };
+
+        btn.className = `w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm flex items-center justify-between transition ${
+          isActive
+            ? 'bg-ht-orange text-white font-bold shadow-xs'
+            : 'text-ht-brown/85 hover:bg-ht-sand font-semibold'
+        }`;
+
+        btn.innerHTML = `
+          <span class="truncate flex items-center gap-2">
+            ${ch.urgent ? `<span class="w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-[#C83E2B] animate-ping'}"></span>` : ''}
+            <span>${ch.name}</span>
+          </span>
+          <span class="text-[11px] px-2 py-0.5 rounded-full ${
+            isActive
+              ? 'bg-white/25 text-white'
+              : ch.urgent
+                ? 'bg-[#C83E2B]/15 text-[#C83E2B] font-bold'
+                : 'bg-ht-sand text-ht-brown/75'
+          }">
+            ${msgCount}
+          </span>
+        `;
+        list.appendChild(btn);
+      });
+    }
+
+    function renderChatStream() {
+      const channel = CHANNELS.find(c => c.id === state.activeChannel) || CHANNELS[0];
+      const header = document.getElementById('active-channel-header');
+      header.innerHTML = `
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-brand font-bold text-ht-brown text-lg">${channel.name}</h3>
+            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md ${
+              channel.urgent ? 'bg-[#C83E2B]/15 text-[#C83E2B]' : 'bg-ht-sand text-ht-brown'
+            }">
+              ${channel.circle}
+            </span>
+          </div>
+          <p class="text-xs text-ht-brown/70 mt-0.5 font-medium">${channel.desc}</p>
+        </div>
+        <span class="hidden sm:inline-flex items-center gap-1 text-[11px] text-ht-brown/60 font-semibold">
+          <i data-lucide="lock-open" class="w-3.5 h-3.5 text-ht-orange"></i> Histórico Aberto
+        </span>
+      `;
+
+      const feed = document.getElementById('chat-messages');
+      const msgs = state.messages[channel.id] || [];
+      feed.innerHTML = '';
+
+      msgs.forEach(msg => {
+        const sender = USERS[msg.userId] || USERS.nathana;
+        const item = document.createElement('div');
+        item.className = 'bg-white p-4 rounded-2xl border border-ht-border shadow-2xs flex items-start gap-3.5 group';
+
+        item.innerHTML = `
+          <div class="w-9 h-9 rounded-xl ${sender.avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+            ${sender.initials}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-ht-brown text-sm">${sender.name}</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-md border ${sender.badgeClass} font-bold">
+                  ${CIRCLES[sender.circleKey].label}
+                </span>
+              </div>
+              <span class="text-[11px] text-ht-brown/50 font-medium">${msg.time}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-ht-brown/90 mt-1.5 leading-relaxed">${escapeHTML(msg.text)}</p>
+            <div class="mt-2.5 flex items-center justify-end">
+              <button onclick="convertMessageToTask('${channel.id}', '${msg.id}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-ht-orange hover:bg-ht-orange hover:text-white bg-ht-orange/10 px-2.5 py-1 rounded-lg transition">
+                <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
+                Converter em Tarefa Kanban
+              </button>
+            </div>
+          </div>
+        `;
+        feed.appendChild(item);
+      });
+
+      feed.scrollTop = feed.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const time = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+      if (!state.messages[state.activeChannel]) {
+        state.messages[state.activeChannel] = [];
+      }
+
+      state.messages[state.activeChannel].push({
+        id: 'm-' + Date.now(),
+        userId: state.activeUser,
+        text,
+        time
+      });
+
+      input.value = '';
+      saveState();
+      renderChannels();
+      renderChatStream();
+    }
+
+    function convertMessageToTask(channelId, msgId) {
+      const msg = (state.messages[channelId] || []).find(m => m.id === msgId);
+      if (!msg) return;
+
+      const sender = USERS[msg.userId] || USERS.nathana;
+      const channelToCircle = {
+        'operacoes-creche': 'ops',
+        'tech-logistica': 'tech',
+        'admin-rgpd': 'admin',
+        'urgencias-animais': 'ops'
+      };
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      state.tasks.unshift({
+        id: 't-' + Date.now(),
+        title: msg.text.length > 95 ? msg.text.substring(0, 92) + '...' : msg.text,
+        circle: channelToCircle[channelId] || sender.circleKey,
+        assignee: sender.name,
+        priority: channelId === 'urgencias-animais' ? 'Urgente' : 'Normal',
+        due: tomorrow.toISOString().split('T')[0],
+        status: 'todo'
+      });
+
+      saveState();
+      renderKanban();
+      showToast('Mensagem convertida em tarefa na coluna "A Fazer"!', 'success');
+    }
+
+    // 7. DEMO RESET & HELPERS
+    function confirmResetDemo() {
+      const modal = document.getElementById('reset-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('reset-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeResetDemo() {
+      localStorage.removeItem(STORAGE_KEY);
+      state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      state.messages = JSON.parse(JSON.stringify(DEFAULT_MESSAGES));
+      saveState();
+      closeResetModal();
+      renderKanban();
+      renderChannels();
+      if (state.activeTab === 'chat') renderChatStream();
+      showToast('Dados de demonstração repostos com sucesso!', 'success');
+    }
+
+    function getPriorityBadge(priority) {
+      if (priority === 'Urgente') {
+        return `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-[#C83E2B]/15 text-[#C83E2B]">Urgente</span>`;
+      }
+      if (priority === 'Alta') {
+        return `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-ht-orange/15 text-ht-orange">Alta</span>`;
+      }
+      return `<span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-ht-sand text-ht-brown/75">Normal</span>`;
+    }
+
+    function getInitials(name) {
+      return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+    }
+
+    function formatDatePT(isoDate) {
+      if (!isoDate) return '';
+      const parts = isoDate.split('-');
+      if (parts.length !== 3) return isoDate;
+      return `${parts[2]}/${parts[1]}`;
+    }
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-ht-brown text-white border border-ht-orange/40' : 'bg-[#3E2610] text-white';
+      toast.className = `${bg} px-4 py-3 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2.5 pointer-events-auto transition-all duration-300`;
+      toast.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-ht-orange"></span>
+…    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
